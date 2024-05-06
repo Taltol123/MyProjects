@@ -1,0 +1,40 @@
+taltol
+318911088
+
+Whatever Player :
+	Puts a mark at a random location.
+
+Clever player :
+    Iterate over the rows from the first to the last each row from left to
+    right and mark the first square that did not occupied.
+
+Genius strategy :
+    Iterate over the columns from the second to the last from the top until the last one
+    and mark the first square that did not occupied.
+    If the iteration finish without mark any squares he iterates over the first column's squares.
+
+
+The advantage of the players classes implements a common interface are :
+ It made it easy to program a modular generic code for Tournament and Game classes.
+ For example, each turn the Game class could call the play turn function of each player
+without know which player's turn it currently is and what it the logic and strategy of the player.
+And all the players classes have the same behavior they need to implement - run a turn.
+With this interface our code is easier to understand and use and in the future, if ever needed,
+we can add new player types without the need to change anything but the PlayerFactory class.
+
+
+The Pillars :
+Polymorphism -
+    The Player interface allow us to perform a single action in different ways.
+    We define one interface and have multiple implementations.
+
+API - Application Programming Interface.
+
+Encapsulation -
+    Interface helps to save the encapsulation
+    and the responsibility of the implementing class is shifted into the user class.
+
+Abstraction -
+    Interface is a tool that enforce good abstraction.
+    Help us to hiding unnecessary information in our code and only showing what is
+    essential.

@@ -1,0 +1,141 @@
+taltol
+318911088
+
+1. The classes in ascii_art package:
+
+    AsciiArtAlgorithm:
+
+    This class responsible for running the AsciiArt algorithm.
+    It contains instances of the class : Image and SubImgCharMatcher.
+    It use this classes in order to activate the algorithm on the given image and with the current
+    charset in order to replace the image's sub-images with the matching characters from the charset.
+
+    Shell:
+    This class responsible for taking input from the clients and operate according to what requested.
+    It contains instances of the classes : Image, AsciiOutput, SubImgCharMatcher because:
+    The client can change the image file name so Shell save the current image to activate the asciiArt
+    algorithm on.
+    The client also can change the output type so Shell saves the requested output type such that when the
+    algorithm will start it will be known to which output out the result.
+    In addition the client has the ability to add and remove characters from the charset so Shell calls the
+    instance of SubImgCharMatcher in order to update the charset.
+    Dependencies:
+    Shell using the ImageUtils class in order to operate and compute things on the image like padding the
+     image.
+     Use the ShellConstants class to get the relevant constants.
+     Create AsciiArtAlgorithm when the client asked to run the algorithm.
+     Create exceptions when needed (IncorrectFormatException and InvalidCommandException).
+     And use KeyBoardInput to get the input from the client.
+
+    ShellConstants:
+    This class contains all the constants which the shell uses.
+    If in the future there will be changes for example the default output will be change, the only changes
+    will be in this class, so the Shell class wont change.
+
+    KeyBoardInput:
+    This class was given to us, it has the logic for get key board input reading.
+
+
+    image:
+
+    Image:
+    This class was given to us, it represents the image.
+
+    ImageUtils:
+    This class contains all the Image utils.
+    ImageUtils have static methods that do computation and operations on the image.
+
+    ImageConstants:
+    This class contains all the constants that the image and imageUtils uses.
+    If in the future there will be changes for example the image format will be change, the only changes
+    will be in this class, so the Shell class wont change.
+
+
+    image_char_matching:
+
+    SubImgCharMatcher:
+    This class is responsible for adjust ASCII character to sub-image with given brightness.
+    It saves and update the charset if requested so and also saves the charset brightness and the max and min
+    brightness in order to have faster computations like normalization.
+    This class using the class CharacterBrightnessUtils in order to get and compute the characters brightness
+    and normalized the brightness.
+
+    CharConverter:
+    This class was given to us, it converts characters to a binary "image".
+
+    CharacterBrightnessUtils:
+    This class contains utils functions for computing characters brightness.
+    CharacterBrightnessUtils also using the CharConverter in order to compute the brightness of a given
+    character.
+
+    exception:
+    I explain about this package's classes in question 3.
+
+
+2. The data structure I used:
+    I used HashMap and HashSet in the SubImgCharMatcher class.
+    The HashSet represents the charset so it contains characters, we don't want a character to appear more
+    than once in the charset, HashSet allowed it.
+    In addition, the operations of adding and removing characters from the set cost O(1)*.
+
+    The HashMap represents a mapping between characters and their brightness.
+    So when the character's brightness needed for computation, it's brightness is accessible in O(1)*
+    time complexity unless the character not save in the map (because it wasn't in the charset before) so it
+    needed to be computed and than saved in the HashMap for future use, this saving will cost O(1)*.
+
+    I decided to not save the normalization brightness of the characters in a data-structure like I did for
+    the regular brightness because in every
+    changes in the charset the normalized brightnesses need to be change so compute all the normalized
+    brightness after each little changes will cost O(n) time complexity (n is the charset size) and this is a
+    structure that will occupy a place in memory and also not helping for complexity time so I decided to not
+    use.
+    Instead I save the current maximum and minimum values of the charset's brightness and update them after
+     each change in the charset, this is optimize the computing of the normalization of the brightness when it
+      needed.
+
+
+    I used Arrays to represents the sub-images and the sub-images brightness in the AsciiArtAlgorithm
+    class because we required to return char[][] so each sub-image in the array I replace with the
+    matching character so it is more clear to use the same dada structure.
+    Also, this structure need to use when the number of columns in each row is the same as the other which
+    fit to our case because we represent an image.
+    Also, access to each cell in the array cost O(1) complexity.
+    Saving those data structure in the Shell optimize the time for computing each sub-image brightness
+    because if the algorithm will be called several time in a row on the same image and resolution the
+    sub-images and their brightness wont need to change so I save those arrays until the image/ brightness
+    change. and if not change, it not computing again and can be simply used.
+
+
+3. When the input is with incorrect format the exception that is thrown is IncorrectFormatException which is
+    an exception I created.
+    The IncorrectFormatException get in its ctor as a parameter the error message so when the code create an
+    IncorrectFormatException to throw, it sent the matching error message for the case.
+    example: the command - add asasa
+    The second word in the add command is not a character or a range or any other option we
+     expected this is incorrect format and we want to create this exception with thr relevant error
+     message and throw it.
+
+
+    When the input is not a correct command - invalid command, the exception I creates is
+    InvalidCommandException.
+    The IncorrectFormatException gets in its ctor as a parameter the error message so when the code create
+     a IncorrectFormatException to throw it sent the matching error message for the case.
+    example:
+    When the resolution is the maximum resolution the image can have, if the command is res up is not a valid
+    command so this exception is created with specific error message to this case and thrown.
+
+
+
+4.  The changes I did in the class SubImgCharMatcher are:
+    - I add the function : getOptionalCharacters()
+      The Shell class has a command for showing all the charset.
+      The SubImgCharMatcher save the current charset so in order to get the charset I added this
+      function.
+    - I add the function : getNumOfOptionalChars()
+      The asciiArt algorithm should be run only if there are exists characters in the charset, so in order to
+      check if there are exists any characters in the charset I added this function that return the size of
+      the charset.
+      (This checking could done by calling getOptionalCharacters() and check the size of the returning set
+      but I prefer to do a function that simply return the asked number).
+
+5. I did not change those classes.

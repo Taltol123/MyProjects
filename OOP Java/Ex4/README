@@ -1,0 +1,50 @@
+taltol
+318911088
+
+The way I decided to implement the package trees:
+The classes I have:
+- Leaf : this class represents a single leaf.
+         Leaf extends from Block,
+         because Block extends from GameObject, Leaf also extends from GameObject.
+         The class contains the logic of move and change the leaf during the game including schedule task that
+          related to the leafs movements.
+
+- Fruit : this class represents a single fruit.
+          Fruit extend from Block,
+          because Block extends from GameObject, Fruit also extends from GameObject.
+          The class contains the logic of change the fruit during the game and handle the
+          collision situation and schedule task in order to return the fruit if it disappear after collision.
+
+- TreeTrunk : this class represents a single tree-trunk.
+              TreeTrunk created from blocks, so the class create list of blocks in the place the trunk should
+               be.
+
+- Tree : this class represents a single tree.
+         Tree creates and save in it's properties all the objects that tree have and made from like : trunk,
+         leafs and fruits. It place them according to the number of fruits and leafs
+         which their values appeared in the WorldConstants class.
+         If in the future if we will need another number of fruits/ leafs we will only need to change the
+         constants values in the WorldConstant class,
+         the tree has the ability to create the requested count without changes in it's code.
+
+
+- Flora : this class responsible for creating the trees.
+          Flora calls the Tree class in order to creates a tree and decide the place to build the tree in
+          according to the Callback it receive as a ctor parameter that gets place and return the ground
+          height in that place.
+
+
+The connections between the classes:
+        Tree contains TreeTrunk, list of leafs and list of fruits.
+        Flora creates the trees.
+
+
+The design patters I used :
+    Facade - I create a Tree class that creates the trunk, leafs and fruits and contains the logic of create
+    the fruits on/ between the leafs, and creating bunch of leafs in valid places - around the trunk.
+    If Tree was not created, Flora was needed to contains all that logic and to work with Fruit's, Leaf's and
+    Trunk's APIs,
+    it was messier because using the API of
+    all those classes in order to create tree is not comfortable as calling the Tree class that creates
+    a tree and all the objects it contains.
+    Tree responsible for all the connections so Flora wont need to handle this,but only to know Tree's API.

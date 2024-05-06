@@ -1,0 +1,178 @@
+taltol
+318911088
+
+Answers:
+1. The design I choose for part 1.7 in order to remove bricks from the game, is:
+    I choose to sent the brickerGameManager instance.
+
+    The advantages of this design:
+        * There will be one place that have a direct access to the game object collection.
+        * If there are more functions or objects in the BrickerGameManager that the class wants an access to,
+          instead of sending all that objects to the ctor which can lead to a lot of parameters we can only
+          sent the game manager instance.
+
+
+    The disadvantages of this design:
+        * It requires to add public methods to the BrickerGameManager class and we don't want to expand to
+        much the API because the smaller the API is, the better.
+        * There will be more public methods of the brickerGameManager that will be exposed to the classes
+        that get the brickerGameManager even if we don't want each of them to have an access
+         to all those abilities.
+
+
+
+2. The way I choose to implement the graphic and numeric life counter is:
+    I created a class for each of them that.
+    Both classes extends the GameObject class because each of them is a game-object(is-a).
+
+    GraphicLifeCounter:
+        The GraphicLifeCounter checks what is the current life number and update the number of hearts which
+        represents the life, to be the same as the current life number.
+        In our game the life number each time change in one number but I enable the changing of hearts
+        to be how much needed, so in the future if for example some action cause
+        removing 2 lives, there wont be needed a changing in this class code.
+        Another class I created is LifeHeart which extends from GameObject because it is a game object (is-a).
+        GraphicLifeCounter create or remove this object according to the current lifes number.
+
+
+    NumericLifeCounter:
+        The NumericLifeCounter creates a mapping of a number to a color,
+        So when it gets the life count from the bricker game manager it gets the fitting color from the map.
+        Using the TextRenderable it update the number and color.
+        In our game the range of life number is between 1 to 4 but if in the future someone will change the
+        life count for example to be from 1 to 8 so this class wont need to be change because I did that every
+        life up to 3 will be green.
+        Also,I override the function-shouldCollideWith such that the other game objects wont collided with it.
+
+
+3. Strategies explanation :
+
+- The way I implement the more balls strategy :
+    I created a class MoreBallsStrategy that implements CollisionStrategy, because MoreBallsStrategy
+    *is-a* collision strategy.
+    In this class, when collision occurred I activate the basic-collision-strategy which given to the class
+    as a ctor parameter (because more balls startegy *has a* basic collision strategy).
+    and then I check how many pucks to create - this information exists in the Constants class.
+    I create the objects and add them to the game-objects-collection.
+
+    I created a class Puck which extends from GameObject because it is a game-object(is-a)..
+    So, MoreBallStrategy creating instances of this class.
+    The puck has an ability to collided with another gameObjects and change direction after it.
+    When the puck is outside the windows it removes from the game object collection.
+
+- The way I implement the extra paddle strategy :
+    I created a class ExtraPaddleStrategy that implements CollisionStrategy, because ExtraPaddleStrategy
+    *is-a* collision strategy.
+    In this class, when collision occurred I activate the basic-collision-strategy which given to the class
+    as a ctor parameter.because extra paddle startegy *has a* basic collision strategy).
+    and then I create an extra-paddle object only if the current extra-paddles number that exists in the game
+    is smaller than the maximum extra- paddle allowed.
+    In our game only one extra-paddle allowed  but if in the future it will change and it will be allowed
+    more than one, this class wont have to be change, only the value of the maximum extra paddle
+    allowed in the Constants class will be modify.
+    If an extra-paddle created I add it to the game-objects-collection.
+    I know how many extra-paddle exists by the brickerGameManager instance which the class gets as a ctor
+    parameter.
+    The BrickerGameManager has extra-paddle-counter and has an ability to return it's current value.
+
+    I also created - ExtraPaddle class which extends GameObject because it is a game-object(is-a)..
+    The ExtraPaddleStrategy create an instance of this class when it create extra-paddle.
+    This class as the ability to be removed after it get to the maximum collided which defined in the
+    Constants.
+
+
+
+- The way I implement the disqualification return strategy :
+    I created a class DisqualificationReturnStrategy that implements CollisionStrategy,
+    because DisqualificationReturnStrategy *is-a* collision strategy.
+    In this class, when collision occurred I activate the basic-collision-strategy which given to the class
+    as a ctor parameter. (because disqualification return startegy *has a* basic collision strategy).
+    and then create the game object - heart in the middle of the brick and with 100 velocity in down
+    direction.
+    The decision where the heart will be and which velocity the heart will have can be easily change by
+    changing the related constants value.
+    The middle of the brick known because the thisObj parameter in the function onCollision represents the
+    brick.
+    This class also add the created heart to the game-objects-collection.
+
+    I also create the class Heart which extends from GameObject because it is a game-object(is-a).
+    I defined in this class the only object it can collided with - the paddle.
+    And the ability to remove from the game-object-collection when it get out of the windows.
+
+
+- The way I implement the camera change strategy :
+    I created a class CameraChangeStrategy that implements CollisionStrategy.
+    Because CameraChangeStrategy *is-a* collision strategy.
+    In this class, when collision occurred I activate the basic-collision-strategy which given to the class
+    as a ctor parameter.(because camera change strategy *has a* basic collision strategy).
+    After that, I check if the otherObj (parameter of the function onCollision) is one of the gameObjects that
+    can cause the camera to follow after.
+    The checking is by the tag of the otherObj because I avoid from using instanceof.
+    All the tags values are in the Constants class in order to avoid hardCoded strings.
+    In our game the only gameObject that can cause the camera to start is the ball but I made a list of all
+    the possible options because maybe in the future there will be another gameObjects that we want them to
+    start the camera.
+    Another checking before creating the CameraFollower object is check if the camera not following anything
+    in that moment.
+    If thisObj is one of the possible options and camera not following other object than it
+    creates and add to the game-objects-collection CameraFollower game object
+    which is a new class I created that extends GameObject because it *is-a* game object.
+    In our game the CameraFollower responsible of following the ball and check how many times the ball
+    had a collision,
+    if it gets to the maximum allowed than the camera reset and removed from the game-object-collection.
+    The CameraFollower has the ability to follow each gameObject that extends CounterGameObject - a new class
+    I created that has the counting ability (implement the interface Countable I also created which
+    represents the ability to count) and extendGameObject.
+    The developer of the game object that extends CounterGameObject can choose what the counter will
+    count, so it wont  have to be collision count.
+    With the count value and the maximum allowed of count value given as a parameter in the ctor the camera
+    will know when to stop following the object.
+
+
+4. Double strategy implementation :
+    I created a class DoubleBehaviorStrategy that implements CollisionStrategy.
+    In this class I get a list of strategies to the ctor parameters.
+    In our current game it will always be two size list, I decided to do a list so in the future if we will
+    want more than one strategy and not specific two strategies we wont need to change the code in this
+    class and only change the class name to more indicative name.
+    In the function: OnCollision I activate the same function of the strategies in the list,
+    so all the strategies will occurred.
+
+    The way I limited the number of strategies to be three :
+        If the maximum number of strategies is X than the maximum double strategies allowed is X-1 (with the
+        origin double-behavior that chosen for the brick).
+        In the BrickStrategyFactory if the DoubleBehaviorStrategy is chosen than there is a function that
+        handle the creation of the strategies list and it calculate how many double-behavior-strategies are
+        allowed by get the value of the number of strategies allowed from the Constants class and subtract 1
+        (as I said before).
+        If the random special strategy is not double-behavior it insert it to the list, otherwise it insert it
+        only if the number of double-behavior strategies in the list is less or equals the maximum allowed
+        and if not it rand another special strategy.
+        If in the future the limited number of strategies wont be 3 the only change need to be done is
+        changing the Constants value of MAX_STRATEGIES_FOR_DOUBLE_BEHAVIOR to the wanted value.
+        Also, right now it insert 2 strategies to the list because the value of the number of behavior in the
+        Constants class is 2.
+        By changing it to another value the list's size will automatically change to the same size.
+
+
+5. Yes I have a changes in the API of section one during section two,
+    In the Ball class, I also override the update function that responsible of check whether the ball is out
+    of the windows and if it is remove it from the game-object-collection and decrease the life count using
+    the instance of brickerGameManager that sent to the ctor as a parameter.
+    This logic is done in the Ball class because the other option is to do this in the update function in the
+    brickerGameManager.
+    I decided that it is clearer that all the logic related to the ball will be in this class (also, the
+    collision handling available in this class), "throw" all the different checking of the
+    existing and the future gameObjects to the bricerGameManager can be unintelligible and messy.
+
+    Another change I would done if I could is remove the function : getCollisionCounter from Ball.
+    Because the Ball class now extends the class CounterGameObject which has the function getCount that do
+    what the getCollisionCounter does in more generic name because multiple class can extends
+    CounterGameObject and use it to count different things.
+    So getCollisionCounter is unnecessary.
+
+
+    I also add public methods to the BrickerGameManager like getWindowDimension, removeGameObject and so on.
+    I add them in order to use them in the other classes that gets the brickerGameManager instance instead of
+    send a lot of parameters to the ctor and have duplicate code in couple classes.
+
